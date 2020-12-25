@@ -3,7 +3,6 @@ from tkinter import messagebox
 import datetime
 import time
 import sqlite3
-from faker import Faker
 
 root = Tk()
 root.state('zoomed')
@@ -67,6 +66,9 @@ cur.execute("""CREATE TABLE IF NOT EXISTS maintainer (
 
 con.commit()
 
+cur.execute("ALTER TABLE transactions ADD return_time text")
+con.commit()
+
 con.close()
 
 # ****************************************** FRAMES *************************************************
@@ -112,15 +114,6 @@ def customer_db(f_name, l_name, age, ph_no, dl_no, gen):
     cur.execute("INSERT INTO customers(first_name, last_name, age, phone_no, dl_no, gender) VALUES (?, ?, ?, ?, ?, ?)", values)
 
     con.commit()
-
-    # cur.execute("SELECT * FROM customers")
-    # a = cur.fetchall()
-    
-    # for i in range(len(a)):
-    #     print(a[i])
-
-    # con.commit()
-
     con.close()
 
 
@@ -250,6 +243,7 @@ def available_vehicles(vehicle):
                 e.insert(END, a[i][j-1])
 
     con.commit()
+    con.close()
 
 
 def book_db(hour, minute, vehicle_no, dl_no):
@@ -288,6 +282,7 @@ def book_db(hour, minute, vehicle_no, dl_no):
         cur.execute("INSERT INTO transactions (date_time, hours, minutes, amount, vehicle_no, dl_no, vehicle_returned, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (dateTime, hour, minute, 0, vehicle_id, dl_number, 0, tran_id))
 
         con.commit()
+        con.close()
 
 
 def booking_info():
@@ -416,6 +411,7 @@ def return_db(vehicle_no_etr):
     amount_label.grid(row=3, column=0, columnspan=3, padx=20, pady=30)
 
     con.commit()
+    con.close()
 
 
 def return_vehicle():
@@ -496,22 +492,18 @@ def change():
     def check(val):
             username = user_input.get()
             old_pwd = old_pwd_input.get()
-            if val == 'username':
-                new_user = new_user_input.get()
-                if username == user[0][0] and old_pwd == user[0][1]:
+
+            if username == user[0][0] and old_pwd == user[0][1]:
+                if val == 'username':
+                    new_user = new_user_input.get()                   
                     cur.execute("UPDATE maintainer SET username=?",(new_user, ))
-                    con.commit()
-                    con.close()
                     change_window.destroy()
-                else:
-                    messagebox.showerror("INFO","Wrong username or password")
-            elif val == 'password':
-                new_pwd = new_pwd_input.get()
-                if username == user[0][0] and old_pwd == user[0][1]:
+
+                elif val == 'password':
+                    new_pwd = new_pwd_input.get()
                     cur.execute("UPDATE maintainer SET password=?",(new_pwd, ))
-                    con.commit()
-                    con.close()
                     change_window.destroy()
+
                 else:
                     messagebox.showerror("INFO","Wrong username or password")
             
@@ -546,6 +538,7 @@ def change():
 
 
     con.commit()
+    con.close()
 
 
 def vhl_db(v_model, v_no, price, v_type):
@@ -615,22 +608,27 @@ def print_trn(counter, b, idx):
             e = Entry(admin_frame, width=5, borderwidth=2, bg="lightblue", font=('Arial', 16, 'bold'))
             e.grid(row=0, column=j, padx=5, pady=2)
             e.insert(END, headers[j])
+
         elif j in [1,6,7,8]:
             e = Entry(admin_frame, width=5, borderwidth=2, bg="lightblue", font=('Arial', 16, 'bold'))
             e.grid(row=0, column=j, padx=5, pady=2)
             e.insert(END, headers[j])
+
         elif j in [2,3,9,10]:
             e = Entry(admin_frame, width=12, borderwidth=2, bg="lightblue", font=('Arial', 16, 'bold'))
             e.grid(row=0, column=j, padx=5, pady=2)
             e.insert(END, headers[j])
+
         elif j == 4:
             e = Entry(admin_frame, width=18, borderwidth=2, bg="lightblue", font=('Arial', 16, 'bold'))
             e.grid(row=0, column=j, padx=5, pady=2)
             e.insert(END, headers[j])
+
         elif j in [11,12]:
             e = Entry(admin_frame, width=11, borderwidth=2, bg="lightblue", font=('Arial', 16, 'bold'))
             e.grid(row=0, column=j, padx=5, pady=2)
             e.insert(END, headers[j])
+
         else:
             e = Entry(admin_frame, width=20, borderwidth=2, bg="lightblue", font=('Arial', 16, 'bold'))
             e.grid(row=0, column=j, padx=5, pady=2)
@@ -642,22 +640,27 @@ def print_trn(counter, b, idx):
                 e = Entry(admin_frame, width=5, borderwidth=2, font=('Arial', 16, 'bold'))
                 e.grid(row=i+1, column=j, padx=5, pady=2)
                 e.insert(END, i+idx)
+
             elif j in [1,6,7,8]:
                 e = Entry(admin_frame, width=5, borderwidth=2, font=('Arial', 16, 'bold'))
                 e.grid(row=i+1, column=j, padx=5, pady=2)
                 e.insert(END, b[i][j-1])
+
             elif j in [2,3,9,10]:
                 e = Entry(admin_frame, width=12, borderwidth=2, font=('Arial', 16, 'bold'))
                 e.grid(row=i+1, column=j, padx=5, pady=2)
                 e.insert(END, b[i][j-1])
+
             elif j == 4:
                 e = Entry(admin_frame, width=18, borderwidth=2, font=('Arial', 16, 'bold'))
                 e.grid(row=i+1, column=j, padx=5, pady=2)
                 e.insert(END, b[i][j-1])
+
             elif j in [11,12]:
                 e = Entry(admin_frame, width=11, borderwidth=2, font=('Arial', 16, 'bold'))
                 e.grid(row=i+1, column=j, padx=5, pady=2)
                 e.insert(END, b[i][j-1])
+
             else:
                 e = Entry(admin_frame, width=20, borderwidth=2, font=('Arial', 16, 'bold'))
                 e.grid(row=i+1, column=j, padx=5, pady=2)
@@ -713,22 +716,21 @@ def trn_info(startNum, endNum):
 
 def delete_db(var, del_key):
         if del_key == '':
-            messagebox.showwarning('INDEX ERROR', 'Enter the transaction ID you want to delete.')
+            messagebox.showwarning('INDEX ERROR', 'Enter the value you want to delete.')
         else:
             con = sqlite3.connect('test.db')
             cur = con.cursor()
             if var == 't':
                 cur.execute("DELETE FROM transactions WHERE transaction_id=?",(del_key,))
-                con.commit()
-                con.close()
+            
             elif var == 'v':
                 cur.execute("DELETE FROM vehicles WHERE vehicle_no=?",(del_key,))
-                con.commit()
-                con.close()
-            if var == 't':
+                
+            elif var == 'c':
                 cur.execute("DELETE FROM customers WHERE dl_no=?",(del_key,))
-                con.commit()
-                con.close()
+                
+            con.commit()
+            con.close()
 
 
 def search_by_v_no(search_key, startNum, endNum):
@@ -773,18 +775,9 @@ def search_by_v_no(search_key, startNum, endNum):
     else:
         forward_btn = Button(admin_window, image=fwd, font=('bold', 30), relief=FLAT, padx=10, command= lambda: search_by_v_no(search_key, endNum+1, endNum+5))
         forward_btn.grid(row=2, column=11, padx=(0,50), pady=20, sticky=E)
+
     con.commit()
     con.close()
-
-    # else:
-    #     cur.execute(f"""SELECT t.transaction_id, c.first_name, c.last_name, t.dl_no, t.date_time, t.hours, t.minutes, t.amount, t.return_time, v.vehicle_no, v.vehicle_model, v.vehicle_type 
-    #                         FROM transactions t, vehicles v, customers c
-    #                         WHERE t.dl_no=c.dl_no AND t.vehicle_no=v.vehicle_no AND t.dl_no=?""",(search_key, ))
-    #     a = cur.fetchall()
-    #     for i in range(len(a)):
-    #         print(a[i])
-    #     con.commit()
-    #     con.close()
 
 
 def search_by_dl_no(search_key, startNum, endNum):
@@ -829,6 +822,7 @@ def search_by_dl_no(search_key, startNum, endNum):
     else:
         forward_btn = Button(admin_window, image=fwd, font=('bold', 30), relief=FLAT, padx=10, command= lambda: search_by_dl_no(search_key, endNum+1, endNum+5))
         forward_btn.grid(row=2, column=11, padx=(0,50), pady=20, sticky=E)
+
     con.commit()
     con.close()
 
@@ -1005,6 +999,9 @@ def display_vhl(s, num):
         forward_btn = Button(admin_window, image=fwd, font=('bold', 30), relief=FLAT, padx=10, command= lambda: display_vhl(num+1, num+10))
         forward_btn.grid(row=2, column=11, padx=(0,50), pady=20, sticky=E)
 
+    con.commit()
+    con.close()
+
 
 def display_ctr(s, num):
     global admin_frame
@@ -1085,6 +1082,9 @@ def display_ctr(s, num):
         forward_btn = Button(admin_window, image=fwd, font=('bold', 30), relief=FLAT, padx=10, command= lambda: display_ctr(num+1, num+5))
         forward_btn.grid(row=2, column=11, padx=(0,50), pady=20, sticky=E)
 
+    con.commit()
+    con.close()
+
 
 def access():
     global admin_window, admin_frame
@@ -1118,14 +1118,14 @@ def access():
     vehicle_btn.pack(side="left", padx=30)
 
     del_and_src()
-    #trn_info(1, 5)
+    trn_info(1, 5)
     
     admin_window.mainloop()
 
 
 def admin():
     global log
-    log = Tk()
+    log = Toplevel(root)
 
     frame = LabelFrame(log, text="Frame...", borderwidth=4, padx=10,pady=10)
     frame.grid(row=0, column=1, columnspan=2, padx=75,pady=20)
@@ -1246,6 +1246,7 @@ def display(startNum, endNum):
         forward_btn.grid(row=0, column=4, padx=10, pady=(20, 40), sticky=E)
 
     con.commit()
+    con.close()
 
 display(1, 10)
 
@@ -1300,7 +1301,7 @@ book_vehicle_btn.pack(side="left", padx=30)
 return_btn = Button(topframe, text="Return Vehicle", font=("bold", 18), fg="white", bg="#2ecc72", relief=FLAT, command=return_vehicle)
 return_btn.pack(side="left", padx=30)
 
-available_vehicle_btn = Button(topframe, text="Available Vehicles", font=("bold", 18), fg="white", bg="#2ecc72", relief=FLAT, command=lambda: display(1, 10, 1))
+available_vehicle_btn = Button(topframe, text="Available Vehicles", font=("bold", 18), fg="white", bg="#2ecc72", relief=FLAT, command=lambda: display(1, 10))
 available_vehicle_btn.pack(side="left", padx=30)
 
 login_btn = Button(topframe, text="Login", font=("bold", 18), fg="white", bg="#2ecc72", relief=FLAT, command=access)
