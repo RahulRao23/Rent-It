@@ -7,7 +7,7 @@ import sqlite3
 root = Tk()
 root.state('zoomed')
 
-img1 = PhotoImage(file='circle2.png')
+img1 = PhotoImage(file='circle.png')
 fwd = PhotoImage(file='fwd.png')
 bck = PhotoImage(file='bck.png')
 
@@ -1304,7 +1304,7 @@ return_btn.pack(side="left", padx=30)
 available_vehicle_btn = Button(topframe, text="Available Vehicles", font=("bold", 18), fg="white", bg="#2ecc72", relief=FLAT, command=lambda: display(1, 10))
 available_vehicle_btn.pack(side="left", padx=30)
 
-login_btn = Button(topframe, text="Login", font=("bold", 18), fg="white", bg="#2ecc72", relief=FLAT, command=access)
+login_btn = Button(topframe, text="Login", font=("bold", 18), fg="white", bg="#2ecc72", relief=FLAT, command=admin)
 login_btn.pack(side="left", padx=30)
 
 
